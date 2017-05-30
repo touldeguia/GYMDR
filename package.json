@@ -1,0 +1,19 @@
+{
+  "name": "gymdr",
+  "version": "0.0.0",
+  "description": "Hello Expo!",
+  "author": null,
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "expo": "17.0.0",
+    "firebase": "^4.0.0",
+    "geofire": "^4.1.2",
+    "lodash": "^4.17.4",
+    "react": "16.0.0-alpha.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz",
+    "react-native-gifted-chat": "^0.1.4",
+    "react-native-multislider": "0.0.14",
+    "react-navigation": "git+https://github.com/react-community/react-navigation.git"
+  }
+}
