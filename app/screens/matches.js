@@ -5,7 +5,6 @@ import {
   View,
   TouchableHighlight,
   StyleSheet, 
-
 } from 'react-native'
 
 import * as firebase from 'firebase'
@@ -55,7 +54,9 @@ getUser = (uid) => {
      })
   }
 
+
 //----------------------------------------------RENDER------------------------------------------------
+
 
   renderRow = (rowData) => { // getting the data for the rows 
     const {id, first_name, work} = rowData
@@ -74,25 +75,33 @@ getUser = (uid) => {
     )
   }
 
-
   renderSeparator = (sectionID, rowID) => { // separating the profiles 
     return (
       <View key={rowID} style={{height:1, backgroundColor:'whitesmoke', marginLeft:100}} />
     )
   }
 
+
 //---------------------------------------------RENDER----------------------------------------------------
+  
+  
   render() {
     return (
-      <ListView
-        style={{flex:1, backgroundColor:'white'}}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        renderSeparator={this.renderSeparator}
-        enableEmptySections
-      />
+      <View style={{flex:1}}>
+        <View style={{alignContent:'center', flexDirection:'row', justifyContent:'space-around', marginTop:20}}>
+        <Text style={{fontSize:20}}>Matches</Text>
+        </View>
+        <ListView
+          style={{flex:1, backgroundColor:'white'}}
+          dataSource={this.state.dataSource}
+          renderRow={this.renderRow}
+          renderSeparator={this.renderSeparator}
+          enableEmptySections
+        />
+      </View>
     )
   }
 }
+
 
 

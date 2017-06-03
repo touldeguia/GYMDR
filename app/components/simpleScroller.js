@@ -10,6 +10,8 @@ import {
 const {width, height} = Dimensions.get('window')
 
 export default class SimpleScroller extends Component {
+  
+  
   componentWillMount() {
     this.pan = new Animated.Value(0)
 

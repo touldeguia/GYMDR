@@ -1,5 +1,6 @@
 import {StackNavigator} from 'react-navigation'
 import * as firebase from 'firebase'
+
 import Home from './screens/home'
 import Login from './screens/login'
 import Chat from './screens/chat'
@@ -13,15 +14,21 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 
-const RouteConfigs = {
+ const RouteConfigs = {
   Login: {screen:Login},
   Home: {screen:Home},
-  Chat: {screen:Chat}, 
+  Chat: {screen:Chat},
+
 }
 
+
 const StackNavigatorConfig = {
+
   headerMode:'none',
+  
 }
+
+
 
 export default StackNavigator(RouteConfigs, StackNavigatorConfig)
     

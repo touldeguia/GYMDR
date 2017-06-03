@@ -7,6 +7,7 @@ import {
   PanResponder, 
   Animated,
   Dimensions,
+  Easing,
 } from 'react-native'
 
 import moment from 'moment' // for calculating the age of the user 
@@ -17,6 +18,51 @@ import moment from 'moment' // for calculating the age of the user
 
 //---------------------------main section--------------
 export default class Card extends Component { 
+
+
+// constructor() {
+//   super()
+//   this.animatedValue1 = new Animated.Value(0)
+//   this.animatedValue2 = new Animated.Value(0)
+//   this.animatedValue3 = new Animated.Value(0)
+// }
+
+
+
+// componentDidMount() {
+//   this.animate()
+// }
+
+
+
+// animate () { 
+//  this.animatedValue1.setValue(0)
+//  this.animatedValue2.setValue(0)
+//  this.animatedValue3.setValue(0)
+
+//  const createAnimation = functio(value, duration, easing, delay=0)
+
+//  {
+//    return Animated.timing(
+//      value,
+//      {
+//        toValue:1, 
+//        duration, 
+//        easing, 
+//        delay
+//      }
+//    )
+//  }
+// Animated.parallel([
+//   createAnimation(this.animatedValue1, 2000, Easing.ease),
+//   createAnimation(this.animatedValue2, 1000, Easing.ease, 1000),
+//   createAnimation(this.animatedValue3, 1000, Easing.ease, 2000)
+// ]).start(
+// }
+
+
+
+
 //-------------once this component is touched---------- 
   componentWillMount() { 
     this.pan = new Animated.ValueXY()  // this component is Animated
@@ -58,6 +104,26 @@ render() {
       inputRange: [-200, 0, 200],
       outputRange: ['10deg', '0deg', '-10deg'],
     })
+    // orientatitng the animation 
+    // const opacity = this.animatedValue.interpolate({
+    //   inputRange: [0, 0.5, 1],
+    //   outputRange: [0, 1, 0]
+    // })
+
+    // const scaleText = this.animatedValue1.interpolate({
+    //   inputRange: [0,1],
+    //   outputRange: [0.5, 2]
+    // })
+
+    // const spinText = this.animatedValue2.interpolate({
+    //   inputRange: [0,1],
+    //   outputRange: ['0deg', ]
+    // })
+
+   
+  
+
+   
 //------------------add image && animate the card---------------
  const animatedStyle = { 
    transform: [ 
@@ -67,6 +133,7 @@ render() {
    ]
  }
   return(
+ 
     <Animated.View
       {...this.cardPanResponder.panHandlers} // accessing the card 
       style={[styles.card, animatedStyle]}> 
@@ -79,6 +146,7 @@ render() {
         <Text style={{fontSize:12, color:'black'}}>{bio}</Text> 
       </View>
     </Animated.View> 
+
     ) // {name}, {profileAge} properties of the card being accessed.
   }
 }
@@ -87,17 +155,22 @@ render() {
 const styles = StyleSheet.create({
 card: { 
   position: 'absolute',
-  height: height * 0.9,
+  height: height * 0.7,
   width: width - 20,
-  top: (height * 0.1)/2, // photo size 
+  top: (height * 0.3)/2, // photo size 
   overflow: 'hidden', // imported image will not exceed the boundaries of the card
-  backgroundColor:'tomato', // gymdr difference
+  backgroundColor:'red', // gymdr difference
   margin: 10, 
  // borderWidth: 1,
 //  borderColor: 'white',
   borderRadius: 8, // rounds the card 
-  },
+},
+  container: { 
+    flex:1,
+    paddingTop: 150
+  }
 })
+
 
 
 

@@ -2,17 +2,47 @@ import _ from 'lodash'
 import moment from 'moment'
 
 export default (profiles, user, swipedProfiles) => {
+  
+  // the reject user card from the stackt
   const rejectMe = _.reject(profiles, profile => profile.uid === user.uid)
-
+  
+  // filtering by the gender preference of the user 
   const filterGender = _.filter(rejectMe, profile => {
-    const userShowMen = user.showMen && profile.gender === 'male'
-    const userShowWomen = user.showWomen && profile.gender === 'female'
+    
+   
 
-    const profileShowMen = profile.showMen && user.gender === 'male'
-    const profileShowWomen = profile.showWomen && user.gender === 'female'
+    const userShowMenCardio = user.showCardio && user.gender === 'male'
+    const userShowWomenCardio = user.showCardio && user.gender === 'female'
 
-    return (userShowMen || userShowWomen) && (profileShowMen || profileShowWomen)
+    const profileShowMenCardio =  profile.showCardio && user.gender === 'male'
+    const profileShowWomenCardio =  profile.showCardio && user.gender === 'female'
+
+    const userShowMenWeightLifting= user.showWeightLifting && user.gender === 'male'
+    const userShowWomenWeightLifting = user.showWeightLifting && user.gender === 'female'
+
+    const profileShowMenWeightLifting =  profile.showWeightLifting && user.gender === 'male'
+    const profileShowWomenWeightLifting =  profile.showWeightLifting && user.gender === 'female'
+
+
+
+
+    return  (userShowMenCardio || userShowWomenCardio) && (profileShowMenCardio || profileShowWomenCardio)  || (userShowMenWeightLifting || userShowWomenWeightLifting) && (profileShowMenWeightLifting || profileShowWomenWeightLifting)
   })
+
+/*
+  // filtering by the workout style of the user 
+  const  filterWorkoutPreference = _.filter(rejectMe, profile => { 
+    const userShowCardio = user.showCardio && profile.gender === 'male'
+    //const userShowWeightLifting = user.showWeightLifting && profile.gender === 'female'
+
+    // other user's profile
+    const profileShowCardio = profile.showCardio && user.gender === 'male'
+    //const profileShowWeightLifting = profile.showWeightLifting && user.gender === 'female'
+
+    return (userShowCardio && profileShowCardio)
+
+  })
+*/
 
   const userBirthday = moment(user.birthday, 'MM/DD/YYYY')
   const userAge = moment().diff(userBirthday, 'years')
