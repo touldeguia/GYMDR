@@ -51,10 +51,6 @@ export default class Card extends Component {
             velocity: {x:3 * direction, y:0},
             deceleration: 0.995, 
         }).start(() => this.props.onSwipeOff(swipedRight, this.props.profile.uid)) // calls by reference the function onSwipeOff to reload a new card
-
-
-
-       
       
       } else { 
           Animated.spring(this.pan, { 
