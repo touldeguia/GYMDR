@@ -1,5 +1,3 @@
-//home.js
-
 import Expo from 'expo'
 import React, {Component} from 'react'
 import {View} from 'react-native'
@@ -34,7 +32,7 @@ export default class Home extends Component {
       this.getProfiles(user.uid, user.distance)
     })
   }
-
+//--------------------firebase stuff-----------------------
   getUser = (uid) => {
     return firebase.database().ref('users').child(uid).once('value')
   }
@@ -90,14 +88,18 @@ export default class Home extends Component {
     firebase.database().ref('relationships').update(relationUpdate)
   }
 
+
+//------------------card stack--------------------------------------
+
   nextCard = (swipedRight, profileUid) => { // EDITING THIS CODE 
     const userUid = this.state.user.uid
     this.setState({profileIndex: this.state.profileIndex + 1})
     if (swipedRight) {
-      // bicep animation pops up on the screen 
-      this.relate(userUid, profileUid, true)
+      // call the YUP animation function here for the bicep emojicon 
+
+      this.relate(userUid, profileUid, true) // updating database
     } else {
-      // wave good-bye animation 
+      // call the NOPE animation function here for the Wave good-bye emojicon
       this.relate(userUid, profileUid, false)
     }
   }
@@ -118,7 +120,7 @@ export default class Home extends Component {
       </View>
     )
   }
-
+//----------------------render----------------
   render() {
     return ( // add screens here
       <SimpleScroller

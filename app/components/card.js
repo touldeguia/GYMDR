@@ -8,9 +8,18 @@ import {
   Animated,
   Dimensions,
   Easing,
+  PixelRatio,
 } from 'react-native'
 
 import moment from 'moment' // for calculating the age of the user 
+import clamp from 'clamp'
+
+const CARD_MARGIN = 10
+const CARD_HEIGHT = height*.7
+const CARD_WIDTH = width - (CARD_MARGIN*2)
+const SWIPE_THRESHOLD = 120;
+const OFFSCREEN_DX = width*1.2
+const ratio = PixelRatio.get()
 
 //---------------------global const and variables section-----
  
@@ -18,54 +27,10 @@ import moment from 'moment' // for calculating the age of the user
 
 //---------------------------main section--------------
 export default class Card extends Component { 
-
-
-// constructor() {
-//   super()
-//   this.animatedValue1 = new Animated.Value(0)
-//   this.animatedValue2 = new Animated.Value(0)
-//   this.animatedValue3 = new Animated.Value(0)
-// }
-
-
-
-// componentDidMount() {
-//   this.animate()
-// }
-
-
-
-// animate () { 
-//  this.animatedValue1.setValue(0)
-//  this.animatedValue2.setValue(0)
-//  this.animatedValue3.setValue(0)
-
-//  const createAnimation = functio(value, duration, easing, delay=0)
-
-//  {
-//    return Animated.timing(
-//      value,
-//      {
-//        toValue:1, 
-//        duration, 
-//        easing, 
-//        delay
-//      }
-//    )
-//  }
-// Animated.parallel([
-//   createAnimation(this.animatedValue1, 2000, Easing.ease),
-//   createAnimation(this.animatedValue2, 1000, Easing.ease, 1000),
-//   createAnimation(this.animatedValue3, 1000, Easing.ease, 2000)
-// ]).start(
-// }
-
-
-
-
 //-------------once this component is touched---------- 
   componentWillMount() { 
     this.pan = new Animated.ValueXY()  // this component is Animated
+    
     this.cardPanResponder = PanResponder.create({ // This component has an event
       onStartShouldSetPanResponder: () => true, 
       onPanResponderTerminationRequest: () => false, 
@@ -74,16 +39,24 @@ export default class Card extends Component {
         {dx:this.pan.x,dy:this.pan.y},
       ]),
 //---------once this component is released------------- 
-      onPanResponderRelease: (e, {dx}) => {
+      onPanResponderRelease: (e, {dx, vx}) => {
         const absDx = Math.abs(dx) // get the abs. value of the variable x bound to dx
         const direction = absDx / dx // get the direction: neg => left, pos => right
         const swipedRight = direction > 0 // positive x-direction 
-        if (absDx > 120) { // if this component moves further than 120
+        
+
+        if (absDx > 120) { // user moved the card off the screen to the right 
+         
           Animated.decay(this.pan, { // then decay it..
             velocity: {x:3 * direction, y:0},
             deceleration: 0.995, 
         }).start(() => this.props.onSwipeOff(swipedRight, this.props.profile.uid)) // calls by reference the function onSwipeOff to reload a new card
-        } else { 
+
+
+
+       
+      
+      } else { 
           Animated.spring(this.pan, { 
           toValue: {x:0, y:0},
           friction: 4.5,
@@ -92,6 +65,7 @@ export default class Card extends Component {
       },
     })
   }
+
 //----------------card properties----------------------
 render() {
     const {birthday, first_name, work, id} = this.props.profile
@@ -104,27 +78,8 @@ render() {
       inputRange: [-200, 0, 200],
       outputRange: ['10deg', '0deg', '-10deg'],
     })
-    // orientatitng the animation 
-    // const opacity = this.animatedValue.interpolate({
-    //   inputRange: [0, 0.5, 1],
-    //   outputRange: [0, 1, 0]
-    // })
 
-    // const scaleText = this.animatedValue1.interpolate({
-    //   inputRange: [0,1],
-    //   outputRange: [0.5, 2]
-    // })
 
-    // const spinText = this.animatedValue2.interpolate({
-    //   inputRange: [0,1],
-    //   outputRange: ['0deg', ]
-    // })
-
-   
-  
-
-   
-//------------------add image && animate the card---------------
  const animatedStyle = { 
    transform: [ 
      {translateX: this.pan.x},
@@ -132,20 +87,55 @@ render() {
      {rotate: rotateCard},
    ]
  }
+
+ 
   return(
  
     <Animated.View
       {...this.cardPanResponder.panHandlers} // accessing the card 
       style={[styles.card, animatedStyle]}> 
-      <Image 
-        style={{flex:1}}
-        source={{uri: fbImage}} // user image 
-      /> 
-      <View style={{margin:20}}>
-        <Text style={{fontSize:20, color:'white'}}>{first_name}, {profileAge}</Text>  
-        <Text style={{fontSize:12, color:'black'}}>{bio}</Text> 
-      </View>
-    </Animated.View> 
+       <View style={styles.imageContainer}>
+          <Image
+            style={{flex:1}}
+            source={{uri: fbImage}}
+          />
+    <Animated.View style={[styles.likeContainer, {
+            transform: [
+              {rotate: '30deg'},
+            ],
+            opacity: this.pan.x.interpolate({
+         
+               inputRange: [-(SWIPE_THRESHOLD), 0],
+              outputRange: [1, 0],
+              extrapolate: 'clamp'
+            })
+          }]}>
+            <Image
+              style= {styles.like}
+              source={require('../images/goodbye.png')}
+            />
+          </Animated.View>       
+    <Animated.View style={[styles.nopeContainer, {
+            transform: [
+              {rotate: '-30deg'},
+            ],
+            opacity: this.pan.x.interpolate({
+              inputRange: [0, SWIPE_THRESHOLD],
+              outputRange: [0, 1],
+              extrapolate: 'clamp'
+            })
+          }]}>
+            <Image
+              style= {styles.nope}
+              source={require('../images/bicep.png')}
+            />
+          </Animated.View>
+        </View>
+        <View style={styles.details}>
+          <Text style ={styles.name}>{first_name}, {profileAge}</Text>
+          <Text style ={styles.work}>{bio}</Text>
+        </View>
+      </Animated.View> 
 
     ) // {name}, {profileAge} properties of the card being accessed.
   }
@@ -168,7 +158,42 @@ card: {
   container: { 
     flex:1,
     paddingTop: 150
-  }
+  },
+  imageContainer: {
+    flex:1,
+    overflow: 'hidden',
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8
+  },
+  cardImage: {
+    flex:1,
+    width:CARD_WIDTH,
+    alignSelf: 'center',
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8
+  },
+  likeContainer: {
+    position: 'absolute',
+    top: 1,
+    right: CARD_MARGIN,
+  },
+  nopeContainer: {
+    position: 'absolute',
+    top: 1,
+    left: CARD_WIDTH - CARD_MARGIN - 161,
+  },
+  details: {
+    justifyContent:'center',
+    margin: 20,
+  },
+  name: {
+    color: 'white',
+    fontSize: 20
+  },
+  work: {
+    color: 'black',
+    fontSize: 15
+  },
 })
 
 
