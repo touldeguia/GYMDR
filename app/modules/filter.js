@@ -29,20 +29,7 @@ export default (profiles, user, swipedProfiles) => {
     return  (userShowMenCardio || userShowWomenCardio) && (profileShowMenCardio || profileShowWomenCardio)  || (userShowMenWeightLifting || userShowWomenWeightLifting) && (profileShowMenWeightLifting || profileShowWomenWeightLifting)
   })
 
-/*
-  // filtering by the workout style of the user 
-  const  filterWorkoutPreference = _.filter(rejectMe, profile => { 
-    const userShowCardio = user.showCardio && profile.gender === 'male'
-    //const userShowWeightLifting = user.showWeightLifting && profile.gender === 'female'
 
-    // other user's profile
-    const profileShowCardio = profile.showCardio && user.gender === 'male'
-    //const profileShowWeightLifting = profile.showWeightLifting && user.gender === 'female'
-
-    return (userShowCardio && profileShowCardio)
-
-  })
-*/
 
   const userBirthday = moment(user.birthday, 'MM/DD/YYYY')
   const userAge = moment().diff(userBirthday, 'years')

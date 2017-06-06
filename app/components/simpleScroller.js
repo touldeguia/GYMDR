@@ -80,7 +80,7 @@ clamp = (num, min, max) => {
 const styles = StyleSheet.create({
   scroller: {
     flex:1,
-    backgroundColor:'white',
+    backgroundColor:'#90EE90',
     flexDirection:'row',
   },
 })

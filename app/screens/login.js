@@ -15,7 +15,7 @@ export default class Login extends Component {
 
 //----------starting the life cycle or app-------------------------
   componentDidMount() {
-    // firebase.auth().signOut()
+   firebase.auth().signOut()
     firebase.auth().onAuthStateChanged(auth => {
       if (auth) {
         this.firebaseRef = firebase.database().ref('users')
@@ -96,6 +96,8 @@ const styles = StyleSheet.create({
   container: {
     flex:1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
+
+
   },
 })

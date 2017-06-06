@@ -67,13 +67,18 @@ export default class Home extends Component {
     const {status} = await Permissions.askAsync(Permissions.LOCATION)
     if (status === 'granted') {
       const location = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
-      // const {latitude, longitude} = location.coords
-      const latitude = 37.39239 //demo lat
-      const longitude = -122.09072 //demo lon
+      
+      const {latitude, longitude} = location.coords 
+     
+      // const latitude  = 37.39239 //demo lat
+      // const longitude  = -122.09072 //demo lon
+   
 
       const geoFireRef = new GeoFire(firebase.database().ref('geoData'))
-      geoFireRef.set(uid, [latitude, longitude])
-
+      geoFireRef.set(uid, [latitude, longitude,])
+     
+     
+      console.log('uid',uid)
       console.log('Permission Granted', location)
     } else {
       console.log('Permission Denied')
@@ -95,11 +100,10 @@ export default class Home extends Component {
     const userUid = this.state.user.uid
     this.setState({profileIndex: this.state.profileIndex + 1})
     if (swipedRight) {
-      // call the YUP animation function here for the bicep emojicon 
-
+    
       this.relate(userUid, profileUid, true) // updating database
     } else {
-      // call the NOPE animation function here for the Wave good-bye emojicon
+     
       this.relate(userUid, profileUid, false)
     }
   }
@@ -128,8 +132,6 @@ export default class Home extends Component {
           <Profile user={this.state.user} />,
           this.cardStack(),
           <Matches navigation={this.props.navigation} user={this.state.user} />,
-          
-
           ]}
       />
     )

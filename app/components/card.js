@@ -53,7 +53,7 @@ export default class Card extends Component {
         }).start(() => this.props.onSwipeOff(swipedRight, this.props.profile.uid)) // calls by reference the function onSwipeOff to reload a new card
       
       } else { 
-          Animated.spring(this.pan, { 
+          Animated.spring(this.pan, { // brings card back to the center 
           toValue: {x:0, y:0},
           friction: 4.5,
         }).start() 
@@ -95,7 +95,7 @@ render() {
             style={{flex:1}}
             source={{uri: fbImage}}
           />
-    <Animated.View style={[styles.likeContainer, {
+    <Animated.View style={[styles.likeContainer, { // if the user dislikes the profile 
             transform: [
               {rotate: '30deg'},
             ],
@@ -111,7 +111,7 @@ render() {
               source={require('../images/goodbye.png')}
             />
           </Animated.View>       
-    <Animated.View style={[styles.nopeContainer, {
+    <Animated.View style={[styles.nopeContainer, { // if user likes the profile ; yes the order is switched for the moment and yes it is confusing but it works....
             transform: [
               {rotate: '-30deg'},
             ],
@@ -145,7 +145,7 @@ card: {
   width: width - 20,
   top: (height * 0.3)/2, // photo size 
   overflow: 'hidden', // imported image will not exceed the boundaries of the card
-  backgroundColor:'red', // gymdr difference
+  backgroundColor:'white', // gymdr difference
   margin: 10, 
  // borderWidth: 1,
 //  borderColor: 'white',
@@ -183,11 +183,11 @@ card: {
     margin: 20,
   },
   name: {
-    color: 'white',
+    color: 'black',
     fontSize: 20
   },
   work: {
-    color: 'black',
+    color: 'darkgrey',
     fontSize: 15
   },
 })
