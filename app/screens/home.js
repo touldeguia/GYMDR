@@ -68,10 +68,10 @@ export default class Home extends Component {
     if (status === 'granted') {
       const location = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
       
-      const {latitude, longitude} = location.coords 
+      // const {latitude, longitude} = location.coords 
      
-      // const latitude  = 37.39239 //demo lat
-      // const longitude  = -122.09072 //demo lon
+      const latitude  = 37.39239 //demo lat
+      const longitude  = -122.09072 //demo lon
    
 
       const geoFireRef = new GeoFire(firebase.database().ref('geoData'))

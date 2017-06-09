@@ -64,7 +64,7 @@ getUser = (uid) => {
     return (
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate('Chat', {user:this.props.user, profile:rowData})} >    
-          <View style={{flexDirection:'row', backgroundColor:'#90EE90', padding:20}} >
+          <View style={{flexDirection:'row', backgroundColor:'white', padding:20}} >
             <CircleImage size={80} facebookID={id} />
             <View style={{justifyContent:'center', marginLeft:10}} >
               <Text style={{color:'white',fontSize:20}} >{first_name}</Text>
@@ -87,9 +87,9 @@ getUser = (uid) => {
   
   render() {
     return (
-      <View style={{flex:1}}>
-        <View style={{alignContent:'center', flexDirection:'row', justifyContent:'space-around', marginTop:20}}>
-        <Text style={{fontSize:20}}>GYM RATS</Text>
+      <View style={{flex:1, backgroundColor:'white'}}>
+         <View style={{alignContent:'center', flexDirection:'row', justifyContent:'space-around', marginTop:50}}>
+         <Text style={{fontSize:25, color:'#008000'}}>GYMRATS</Text>
         </View>
         <ListView
           style={{flex:1,}}

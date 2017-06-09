@@ -9,7 +9,7 @@ export default class CircleImage extends Component {
         return(
             <Image 
               source={{uri:fbImage}}
-              style={{width:size, height:size, borderRadius: size/2, borderColor:'white', borderWidth:1,}}
+              style={{width:size, height:size, borderRadius: size/2, borderColor:'white', borderWidth:3,}}
           />
         )
     } 

@@ -6,6 +6,8 @@ import {View, StyleSheet, ActivityIndicator} from 'react-native'
 import { NavigationActions } from 'react-navigation'
 import FacebookButton from '../components/facebookButton'
 
+import moment from 'moment'
+import GeoFire from 'geofire'
 export default class Login extends Component {
 
 //------------making the spinner true or buffer animation--------------
@@ -15,7 +17,7 @@ export default class Login extends Component {
 
 //----------starting the life cycle or app-------------------------
   componentDidMount() {
-   firebase.auth().signOut()
+    // firebase.auth().signOut()
     firebase.auth().onAuthStateChanged(auth => {
       if (auth) {
         this.firebaseRef = firebase.database().ref('users')
@@ -61,6 +63,46 @@ export default class Login extends Component {
     firebase.database().ref('users').child(uid).update({...userData, ...defaults})
   }
 
+//--------------------------creating the user first chexc in -----------
+
+createUserFirstCheckIn = async (uid) => { 
+// initial day 
+const checkInDay = moment().format('MM/DD/YYYY')
+// initial day plus 2 
+const checkInDayPlusTwo = new moment().add(2, 'days').format('MM/DD/YYYY')
+// child node made 
+const checkin1 = firebase.database().ref('checkIn').child(uid).child('checkInDay1')
+  checkin1.set(checkInDayPlusTwo)
+// streak child node 
+const streak = firebase.database().ref('checkIn').child(uid).child('streakCount')
+    streak.set(0)
+// get user location 
+const checkInTimeNode = firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary')
+                  const checkInTime = moment().unix('X')
+                  const checkInTimeBoundary = checkInTime + checkInTime
+                  checkInTimeNode.set(checkInTimeBoundary)
+                  console.log('CheckInTimeBoundary: ', checkInTimeBoundary)
+                  
+
+
+const {Permissions, Location} = Expo
+const {status} = await Permissions.askAsync(Permissions.LOCATION)
+      if (status === 'granted') {
+           const location = 'location'
+           const gymLocation = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
+           const {latitude, longitude} = gymLocation.coords
+           const geoFireRef = new GeoFire(firebase.database().ref('checkIn').child(uid).child('gym'))
+                geoFireRef.set(location, [latitude,longitude])
+           
+           console.log('Permission Granted', gymLocation)
+        } else {
+           console.log('Permission Denied')
+    }
+
+}
+
+
+
 //-------logging the user into the app---------------
   login = async () => {
     this.setState({showSpinner:true})
@@ -75,6 +117,7 @@ export default class Login extends Component {
       const userData = await response.json()
       const {uid} = await this.authenticate(token)
       this.createUser(uid, userData)
+      this.createUserFirstCheckIn(uid)
     }
   }
 
@@ -96,8 +139,7 @@ const styles = StyleSheet.create({
   container: {
     flex:1,
     alignItems: 'center',
-    justifyContent: 'center'
-
+    justifyContent: 'center',
 
   },
 })

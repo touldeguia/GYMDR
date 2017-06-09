@@ -68,6 +68,7 @@ clamp = (num, min, max) => {
     }
     const scrollerWidth = this.props.screens.length * width
     return (
+      
       <Animated.View
         style={[styles.scroller, animatedStyles, {width:scrollerWidth}]}
         {...this.scrollResponder.panHandlers}>

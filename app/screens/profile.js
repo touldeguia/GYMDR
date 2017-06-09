@@ -6,8 +6,10 @@ import {
   Text,
   Switch,
   TouchableHighlight,
+  Image,
 } from 'react-native'
-
+import moment from 'moment'
+import _ from 'lodash'
 import { 
   NavigationActions,  
   withNavigation } from 'react-navigation'
@@ -27,33 +29,121 @@ export default class Profile extends Component {
       .update({[key]:value})
   }
 
+
+
   
-// CheckIn = async () => {
-   
-//       this.createCheckIn(uid)
-//     }
+checkIn = async () => {
   
-//   }
+  uid = this.props.user.uid // uid key for the object returned
+  console.log('uid',uid)
+
+  
+
+            const checkInTimeUpperBoundary = firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary').once('value', (snap) => {
+            const checkInTimeBoundary = snap.val()
+            //getting the previous checkInDay1
+            const  checkInDay1 = firebase.database().ref().child('checkIn').child(uid).child('checkInDay1').once('value', (snap) => {
+            const  checkInDayTimeBoundary = snap.val() // local variable 
+            //getting the previous streakCount
+            const streakCountChild = firebase.database().ref().child('checkIn').child(uid).child('streakCount').once('value', (snap) => { 
+            const streakCount = snap.val()
+            // getting the previous latitude and longitude
+            const coords = firebase.database().ref().child('checkIn').child(uid).child('gym').child('location').once('value', async (snap) => { 
+            const prevCoords = snap.val()
+           
+            const {Permissions, Location} = Expo // change this to update the gym location......? 
+            const {status} = await Permissions.askAsync(Permissions.LOCATION)
+            if (status === 'granted') {
     
 
-    
-    checkIn = async () => {
+                  const newCheckInTime = moment().unix('X')
+                  const newCheckInDay = moment().format('MM/DD/YYYY')
+                  const location = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
+                  const {latitude, longitude} = location.coords
+                  
+                  // rounding the current lat and long in order to compare it.. 
+                  const currentLatitude =  Math.round(latitude * 100.0) / 100.0
+                  const currentLongitude =  Math.round(longitude * 100.0) / 100.0
+                
+                  var array =  _.values(prevCoords) // extracting the coords from the object 
+                  // extracting the data 
+                  array0 = array[0]
+                  array1 = array[1]
+                  array2 = array1[0] // lat 
+                  array3 = array1[1] // long data that I want 
+
+                  
+                  
+                  var prevLongitude = Math.round(array3 * 100.0) / 100.0
+                  var prevLatitude = Math.round(array2 * 100) / 100.0
+
+                    console.log('checkInTimeBoundary: ', checkInDayTimeBoundary)
+                    console.log('streakCount: ', streakCount)
+                    console.log('array', array)
+                    console.log('arr0',array0)
+                    console.log('arr1',array1)
+                    console.log('arr2',array2)
+                    console.log('arr3',array3)
+                    console.log('current latitude', currentLatitude)
+                    console.log('current longitude', currentLongitude)
+                    console.log('prevLongitude',prevLongitude)
+                    console.log('prevLatitude', prevLatitude)
+                    console.log('checkInDayTimeBoundary: ', checkInDayTimeBoundary)
+                    console.log('NewCheckInDay:', newCheckInDay)
+                    console.log('NewCheckInTime: ', newCheckInTime)
+                    console.log('CheckInTimeBoundary:', checkInTimeBoundary)
+                    
   
-      const {Permissions, Location} = Expo
-      const {status} = await Permissions.askAsync(Permissions.LOCATION)
-      if (status === 'granted') {
-           const location = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
-           const {latitude, longitude} = location.coords
-           const geoFireRef = new GeoFire(firebase.database().ref('geoData'))
-           geoFireRef.set(this.props.user.uid, [latitude, longitude])
-           console.log('Permission Granted', location)
-        } else {
-          console.log('Permission Denied')
-    }
+                    // if these conditions are met then we will increase streak count node and if they aren't met then we will set the new gym location'
+                    if( (prevLongitude == currentLongitude ) && (prevLatitude == currentLatitude) && (newCheckInDay <= checkInDayTimeBoundary) && (newCheckInTime >= checkInTimeBoundary)){
+                            var newStreakCount = streakCount 
+                                newStreakCount = newStreakCount + 1 
+                            const updateStreakCount = firebase.database().ref('checkIn').child(uid).child('streakCount')
+                                  updateStreakCount.set(newStreakCount)
+                            
+                            
+                            const newCheckInTime = moment().unix('X')
+                                  newCheckInTime = newCheckInTime + newCheckInTime
+                            const newCheckInTimeBoundary =  firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary')
+                                  newCheckInTimeBoundary.set(newCheckInTime)
+                          
+                            console.log('newCheckInTimeBoundaryIs: ', newCheckInTime)
+                            console.log('updatedStreakCount',newStreakCount)
+                  
+                    } else { 
+                          //resetting the streak count on the user's node '
+                          var newStreakCount = streakCount 
+                          newStreakCount = newStreakCount - newStreakCount 
+                          const updateStreakCount = firebase.database().ref('checkIn').child(uid).child('streakCount')
+                                      updateStreakCount.set(newStreakCount)
+                          
+                          //resetting the gym location on the user node             
+                          const {Permissions, Location} = Expo
+                          const {status} = await Permissions.askAsync(Permissions.LOCATION)
+                          if (status === 'granted') {
+                              const location = 'location'
+                              const gymLocation = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
+                              const {latitude, longitude} = gymLocation.coords
+                              const geoFireRef = new GeoFire(firebase.database().ref('checkIn').child(uid).child('gym'))
+                                    geoFireRef.set(location, [latitude,longitude])
+                              
+                              console.log('Permission Granted', gymLocation)
+                            } else {console.log('Permission Denied')}              
+                          console.log('new streak count is:', newStreakCount)
+                          console.log('Reset')
+                  
+                    }
+                
+            } else {console.log('Permission Denied')}
+          
+        })
+     })
+    
+   })
+  })         
   }
 
  
-
 
 state = {
     ageRangeValues: this.props.user.ageRange,
@@ -70,8 +160,11 @@ state = {
     const {ageRangeValues, distanceValue, showMen, showWomen, showWeightLifting, showCardio} = this.state
     const bio = (work && work[0] && work[0].position) ? work[0].position.name : null
     return (
-
+      
       <View style={styles.container}>
+        <View style={{alignItems:'center'}}>
+          <Text style={{fontSize:25, color:'white',marginTop:50}}>GYMDR</Text>
+        </View>
         <View style={styles.profile}>
           <CircleImage facebookID={id} size={120} />
           <Text style={{fontSize:20, color:'white'}}>{first_name}</Text>
@@ -149,7 +242,7 @@ state = {
 const styles = StyleSheet.create({
   container: {
     flex:1,
-    backgroundColor:'#90EE90',
+    backgroundColor:'#25D366',
   },
   profile: {
     flex:1,
