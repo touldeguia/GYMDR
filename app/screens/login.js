@@ -17,7 +17,7 @@ export default class Login extends Component {
 
 //----------starting the life cycle or app-------------------------
   componentDidMount() {
-    // firebase.auth().signOut()
+  // firebase.auth().signOut()
     firebase.auth().onAuthStateChanged(auth => {
       if (auth) {
         this.firebaseRef = firebase.database().ref('users')
@@ -78,8 +78,9 @@ const streak = firebase.database().ref('checkIn').child(uid).child('streakCount'
     streak.set(0)
 // get user location 
 const checkInTimeNode = firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary')
-                  const checkInTime = moment().unix('X')
-                  const checkInTimeBoundary = checkInTime + checkInTime
+                  const checkInTime = + new Date()
+                  const checkInTimeSecs =  Math.floor(Date.now() / 10000)
+                  const checkInTimeBoundary = checkInTimeSecs + 1440
                   checkInTimeNode.set(checkInTimeBoundary)
                   console.log('CheckInTimeBoundary: ', checkInTimeBoundary)
                   

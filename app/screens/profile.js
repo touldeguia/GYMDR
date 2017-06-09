@@ -56,7 +56,8 @@ checkIn = async () => {
             if (status === 'granted') {
     
 
-                  const newCheckInTime = moment().unix('X')
+                  const newCheckInTime = + new Date()
+                  const newCheckInTimeSecs =  Math.floor(Date.now() / 10000)
                   const newCheckInDay = moment().format('MM/DD/YYYY')
                   const location = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
                   const {latitude, longitude} = location.coords
@@ -91,23 +92,25 @@ checkIn = async () => {
                     console.log('checkInDayTimeBoundary: ', checkInDayTimeBoundary)
                     console.log('NewCheckInDay:', newCheckInDay)
                     console.log('NewCheckInTime: ', newCheckInTime)
-                    console.log('CheckInTimeBoundary:', checkInTimeBoundary)
+                    console.log('CheckInTimeBoundary:', newCheckInTimeSecs)
                     
   
                     // if these conditions are met then we will increase streak count node and if they aren't met then we will set the new gym location'
-                    if( (prevLongitude == currentLongitude ) && (prevLatitude == currentLatitude) && (newCheckInDay <= checkInDayTimeBoundary) && (newCheckInTime >= checkInTimeBoundary)){
+                    if( (prevLongitude == currentLongitude ) && (prevLatitude == currentLatitude) && (newCheckInDay <= checkInDayTimeBoundary) && (newCheckInTimeSecs >= checkInTimeBoundary)){
                             var newStreakCount = streakCount 
                                 newStreakCount = newStreakCount + 1 
                             const updateStreakCount = firebase.database().ref('checkIn').child(uid).child('streakCount')
                                   updateStreakCount.set(newStreakCount)
                             
-                            
-                            const newCheckInTime = moment().unix('X')
-                                  newCheckInTime = newCheckInTime + newCheckInTime
-                            const newCheckInTimeBoundary =  firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary')
-                                  newCheckInTimeBoundary.set(newCheckInTime)
+                              const newCheckInTime = + new Date()
+                              
+                              const newCheckInTimeSecs =  Math.floor(Date.now() / 10000)
+                                    newCheckInTimeSecs = newCheckInTimeSecs + 1440
+                              
+                              const newCheckInTimeBoundary =  firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary')
+                                    newCheckInTimeBoundary.set(newCheckInTimeSecs)
                           
-                            console.log('newCheckInTimeBoundaryIs: ', newCheckInTime)
+                            console.log('newCheckInTimeBoundaryIs: ', newCheckInTimeSecs)
                             console.log('updatedStreakCount',newStreakCount)
                   
                     } else { 
