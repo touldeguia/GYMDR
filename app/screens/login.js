@@ -71,13 +71,13 @@ const checkInDay = moment().format('MM/DD/YYYY')
 // initial day plus 2 
 const checkInDayPlusTwo = new moment().add(2, 'days').format('MM/DD/YYYY')
 // child node made 
-const checkin1 = firebase.database().ref('checkIn').child(uid).child('checkInDay1')
+const checkin1 = firebase.database().ref('users').child(uid).child('checkInDay1')
   checkin1.set(checkInDayPlusTwo)
 // streak child node 
-const streak = firebase.database().ref('checkIn').child(uid).child('streakCount')
+const streak = firebase.database().ref('users').child(uid).child('streakCount')
     streak.set(0)
 // get user location 
-const checkInTimeNode = firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary')
+const checkInTimeNode = firebase.database().ref('users').child(uid).child('checkInTimeBoundary')
                   const checkInTime = + new Date()
                   const checkInTimeSecs =  Math.floor(Date.now() / 10000)
                   const checkInTimeBoundary = checkInTimeSecs + 1440
@@ -92,7 +92,7 @@ const {status} = await Permissions.askAsync(Permissions.LOCATION)
            const location = 'location'
            const gymLocation = await Location.getCurrentPositionAsync({enableHighAccuracy: false})
            const {latitude, longitude} = gymLocation.coords
-           const geoFireRef = new GeoFire(firebase.database().ref('checkIn').child(uid).child('gym'))
+           const geoFireRef = new GeoFire(firebase.database().ref('users').child(uid).child('gym'))
                 geoFireRef.set(location, [latitude,longitude])
            
            console.log('Permission Granted', gymLocation)

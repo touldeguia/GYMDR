@@ -7,6 +7,7 @@ import {
   Switch,
   TouchableHighlight,
   Image,
+  Dimensions,
 } from 'react-native'
 import moment from 'moment'
 import _ from 'lodash'
@@ -19,6 +20,9 @@ import * as firebase from 'firebase'
 import Home from '../screens/home'
 import CircleImage from '../components/circleImage'
 import CheckInButton from '../components/checkInButton'
+
+ const {width, height} = Dimensions.get('window') 
+
 
 export default class Profile extends Component {
 
@@ -39,16 +43,16 @@ checkIn = async () => {
 
   
 
-            const checkInTimeUpperBoundary = firebase.database().ref().child('checkIn').child(uid).child('checkInTimeBoundary').once('value', (snap) => {
+            const checkInTimeUpperBoundary = firebase.database().ref('users').child(uid).child('checkInTimeBoundary').once('value', (snap) => {
             const checkInTimeBoundary = snap.val()
             //getting the previous checkInDay1
-            const  checkInDay1 = firebase.database().ref().child('checkIn').child(uid).child('checkInDay1').once('value', (snap) => {
+            const  checkInDay1 = firebase.database().ref('users').child(uid).child('checkInDay1').once('value', (snap) => {
             const  checkInDayTimeBoundary = snap.val() // local variable 
             //getting the previous streakCount
-            const streakCountChild = firebase.database().ref().child('checkIn').child(uid).child('streakCount').once('value', (snap) => { 
+            const streakCountChild = firebase.database().ref('users').child(uid).child('streakCount').once('value', (snap) => { 
             const streakCount = snap.val()
             // getting the previous latitude and longitude
-            const coords = firebase.database().ref().child('checkIn').child(uid).child('gym').child('location').once('value', async (snap) => { 
+            const coords = firebase.database().ref('users').child(uid).child('gym').child('location').once('value', async (snap) => { 
             const prevCoords = snap.val()
            
             const {Permissions, Location} = Expo // change this to update the gym location......? 
@@ -158,33 +162,34 @@ state = {
 
 
   render() {
-
     const {first_name, work, id} = this.props.user
     const {ageRangeValues, distanceValue, showMen, showWomen, showWeightLifting, showCardio} = this.state
     const bio = (work && work[0] && work[0].position) ? work[0].position.name : null
     return (
-      
+  <Image
+   source={require('../images/background.png')}
+   style={styles.backgroundImage}>
+     
       <View style={styles.container}>
         <View style={{alignItems:'center'}}>
-          <Text style={{fontSize:25, color:'white',marginTop:50}}>GYMDR</Text>
+          <Text style={{fontSize:25, color:'white',marginTop:62}}>GYMDR</Text>
         </View>
         <View style={styles.profile}>
           <CircleImage facebookID={id} size={120} />
           <Text style={{fontSize:20, color:'white'}}>{first_name}</Text>
           <Text style={{fontSize:12, color:'black'}}>{bio}</Text>
       <CheckInButton onPress={this.checkIn}/>
-        <Text>Check Into GYM</Text>
       </View>
 
        
         
         <View style={styles.label}>
           <Text style={{color:'white'}}>Distance</Text>
-          <Text style={{color:'black'}}>{distanceValue} mi</Text>
+          <Text style={{color:'white'}}>{distanceValue} mi</Text>
         </View>
          <Slider
           markerStyle={{height:20, width: 20, borderRadius:100,}}
-          selectedStyle={{backgroundColor:'#008000'}}
+          selectedStyle={{backgroundColor:'red'}}
           min={1}
           max={30}
           values={distanceValue}
@@ -193,12 +198,12 @@ state = {
         />
 
         <View style={styles.label}>
-          <Text style={{color:'white'}}>Age Range</Text>
-          <Text style={{color:'black'}}>{ageRangeValues.join('-')}</Text>
+          <Text style={{color:'white', marginTop: 40}}>Age</Text>
+          <Text style={{color:'white'}}>{ageRangeValues.join('-')}</Text>
         </View>
         <Slider
           markerStyle={{height:20, width: 20, borderRadius:100,}}
-          selectedStyle={{backgroundColor:'#008000'}}
+          selectedStyle={{backgroundColor:'red'}}
           min={18}
           max={70}
           values={ageRangeValues}
@@ -210,7 +215,7 @@ state = {
         <View style={styles.switch}>
           <Text style={{color:'white'}}>Cardio</Text>
           <Switch
-            onTintColor='#008000'
+            onTintColor='#ff0000'
             value={showCardio}
             onValueChange={val => {
               this.setState({showCardio:val})
@@ -221,7 +226,7 @@ state = {
         <View style={styles.switch}>
           <Text style={{color:'white'}}>Weightlifting</Text>
           <Switch
-            onTintColor='#008000'
+            onTintColor='#ff0000'
             value={showWeightLifting}
             onValueChange={val => {
               this.setState({showWeightLifting:val})
@@ -231,6 +236,7 @@ state = {
             </View>
           </View>
         </View>  
+    </Image>
     )
    }
   }
@@ -245,7 +251,8 @@ state = {
 const styles = StyleSheet.create({
   container: {
     flex:1,
-    backgroundColor:'#25D366',
+    backgroundColor:'transparent',
+    
   },
   profile: {
     flex:1,
@@ -266,4 +273,11 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     margin:1,
   },
+  
+  backgroundImage: {
+       
+     width: width,
+     height: height,
+     resizeMode: 'cover'
+    },
 })

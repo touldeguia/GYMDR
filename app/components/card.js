@@ -1,17 +1,17 @@
 import React, {Component} from 'react'
 import {
   StyleSheet,
-  View, 
-  Image, 
+  View,
+  Image,
   Text,
-  PanResponder, 
+  PanResponder,
   Animated,
   Dimensions,
   Easing,
   PixelRatio,
 } from 'react-native'
 
-import moment from 'moment' // for calculating the age of the user 
+import moment from 'moment' // for calculating the age of the user
 import clamp from 'clamp'
 
 const CARD_MARGIN = 10
@@ -22,49 +22,58 @@ const OFFSCREEN_DX = width*1.2
 const ratio = PixelRatio.get()
 
 //---------------------global const and variables section-----
- 
+
  const {width, height} = Dimensions.get('window') // make sure it fits the device
 
 //---------------------------main section--------------
-export default class Card extends Component { 
-//-------------once this component is touched---------- 
-  componentWillMount() { 
+export default class Card extends Component {
+
+
+
+//-------------once this component is touched----------
+  componentWillMount() {
+
     this.pan = new Animated.ValueXY()  // this component is Animated
-    
+
     this.cardPanResponder = PanResponder.create({ // This component has an event
-      onStartShouldSetPanResponder: () => true, 
-      onPanResponderTerminationRequest: () => false, 
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
       onPanResponderMove: Animated.event([
-        null, 
+        null,
         {dx:this.pan.x,dy:this.pan.y},
       ]),
-//---------once this component is released------------- 
+//---------once this component is released-------------
       onPanResponderRelease: (e, {dx, vx}) => {
         const absDx = Math.abs(dx) // get the abs. value of the variable x bound to dx
         const direction = absDx / dx // get the direction: neg => left, pos => right
-        const swipedRight = direction > 0 // positive x-direction 
-        
+        const swipedRight = direction > 0 // positive x-direction
 
-        if (absDx > 120) { // user moved the card off the screen to the right 
-         
+
+        if (absDx > 120) { // user moved the card off the screen to the right
+
           Animated.decay(this.pan, { // then decay it..
             velocity: {x:3 * direction, y:0},
-            deceleration: 0.995, 
+            deceleration: 0.995,
         }).start(() => this.props.onSwipeOff(swipedRight, this.props.profile.uid)) // calls by reference the function onSwipeOff to reload a new card
-      
-      } else { 
-          Animated.spring(this.pan, { // brings card back to the center 
+
+      } else {
+          Animated.spring(this.pan, { // brings card back to the center
           toValue: {x:0, y:0},
           friction: 4.5,
-        }).start() 
+        }).start()
         }
       },
     })
   }
 
+
+
+
+
 //----------------card properties----------------------
 render() {
-    const {birthday, first_name, work, id} = this.props.profile
+    
+    const {birthday, first_name, work, id, streakCount} = this.props.profile
     const bio = (work && work[0] && work[0].position) ? work[0].position.name : null // to check if there is work if not then put null value
     const profileBday = moment(birthday, 'MM/DD/YYYY')
     const profileAge = moment().diff(profileBday, 'years')
@@ -76,31 +85,35 @@ render() {
     })
 
 
- const animatedStyle = { 
-   transform: [ 
+ const animatedStyle = {
+   transform: [
      {translateX: this.pan.x},
      {translateY: this.pan.y},
      {rotate: rotateCard},
    ]
  }
 
- 
+
   return(
- 
+<Image
+   source={require('../images/cardStackBackground.png')}
+   style={styles.backgroundImage}>
+   
     <Animated.View
-      {...this.cardPanResponder.panHandlers} // accessing the card 
-      style={[styles.card, animatedStyle]}> 
+      {...this.cardPanResponder.panHandlers} // accessing the card
+      style={[styles.card, animatedStyle]}>
+     
        <View style={styles.imageContainer}>
           <Image
             style={{flex:1}}
             source={{uri: fbImage}}
           />
-    <Animated.View style={[styles.likeContainer, { // if the user dislikes the profile 
+    <Animated.View style={[styles.likeContainer, { // if the user dislikes the profile
             transform: [
               {rotate: '30deg'},
             ],
             opacity: this.pan.x.interpolate({
-         
+
                inputRange: [-(SWIPE_THRESHOLD), 0],
               outputRange: [1, 0],
               extrapolate: 'clamp'
@@ -110,7 +123,7 @@ render() {
               style= {styles.like}
               source={require('../images/goodbye.png')}
             />
-          </Animated.View>       
+          </Animated.View>
     <Animated.View style={[styles.nopeContainer, { // if user likes the profile ; yes the order is switched for the moment and yes it is confusing but it works....
             transform: [
               {rotate: '-30deg'},
@@ -126,32 +139,48 @@ render() {
               source={require('../images/bicep.png')}
             />
           </Animated.View>
+   
         </View>
-        <View style={styles.details}>
-          <Text style ={styles.name}>{first_name}, {profileAge}</Text>
-          <Text style ={styles.work}>{bio}</Text>
-        </View>
-      </Animated.View> 
 
+
+        <View style={{flexDirection:'row',}}>
+          <View style={styles.details}>
+            <Text style ={styles.name}>{first_name}, {profileAge} </Text>
+            <Text style ={styles.work}>{bio}</Text>
+          </View>
+          <View style={{flex:0.15,}}>
+            <Image
+                style={{marginTop:20,}}
+                source={require('../images/streak.png')}
+              />  
+          </View>
+          <View style={{ margin:8,flex:0.10, marginTop:15,justifyContent:'center'}}>
+            <Text style={{fontSize:15,opacity:0.8, color:'black'}}>{streakCount}</Text>
+          </View>
+        </View>
+
+  
+      </Animated.View>
+</Image>
     ) // {name}, {profileAge} properties of the card being accessed.
   }
 }
 
 //---------------------Card Styles Sheet-------------------
 const styles = StyleSheet.create({
-card: { 
+card: {
   position: 'absolute',
-  height: height * 0.7,
+  height: height * 0.8,
   width: width - 20,
-  top: (height * 0.3)/2, // photo size 
+  top: (height * 0.2)/2, // photo size
   overflow: 'hidden', // imported image will not exceed the boundaries of the card
   backgroundColor:'white', // gymdr difference
-  margin: 10, 
+  margin: 10,
  // borderWidth: 1,
 //  borderColor: 'white',
-  borderRadius: 8, // rounds the card 
+  borderRadius: 8, // rounds the card
 },
-  container: { 
+  container: {
     flex:1,
     paddingTop: 150
   },
@@ -179,7 +208,7 @@ card: {
     left: CARD_WIDTH - CARD_MARGIN - 161,
   },
   details: {
-    justifyContent:'center',
+    flex:1,
     margin: 20,
   },
   name: {
@@ -190,6 +219,18 @@ card: {
     color: 'darkgrey',
     fontSize: 15
   },
+  streakContainer: { 
+    position: 'absolute',
+    bottom: 1,
+    right: CARD_MARGIN,
+  },
+   backgroundImage: {
+    
+        width: width,
+        height: height,
+        resizeMode: 'cover'
+    },
+
 })
 
 

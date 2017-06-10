@@ -89,7 +89,7 @@ getUser = (uid) => {
     return (
       <View style={{flex:1, backgroundColor:'white'}}>
          <View style={{alignContent:'center', flexDirection:'row', justifyContent:'space-around', marginTop:50}}>
-         <Text style={{fontSize:25, color:'#008000'}}>GYMRATS</Text>
+         <Text style={{fontSize:25, color:'red'}}>GYMRATS</Text>
         </View>
         <ListView
           style={{flex:1,}}
